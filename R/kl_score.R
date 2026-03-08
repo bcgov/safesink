@@ -1,3 +1,14 @@
+#' Kullback-Leibler divergence between transition matrices
+#'
+#' Computes KL divergence between an observed transition matrix and a
+#' predicted matrix. Both matrices are normalized to sum to one.
+#'
+#' @param P_obs Observed transition matrix
+#' @param P_hat Predicted transition matrix
+#' @param tiny Small floor value used to avoid log(0)
+#'
+#' @return Scalar KL divergence
+#' @export
 kl_score <- function(P_obs, P_hat, tiny = 1e-15) {
 
   # Normalize distributions
