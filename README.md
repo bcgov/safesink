@@ -99,9 +99,14 @@ sol <- sinkhorn_aligned(
 ## Example
 
 ```r
-sol <- sinkhorn_log(a, b, C, epsilon = 0.5)
+# naive call (incorrect if marginals are misaligned)
+sinkhorn_log(a, b, C, epsilon = 0.5)
 
-check_transport(sol$plan, a, b)
+# This interprets the marginals according to their position,
+# not their names, potentially producing an incorrect transport plan.
+
+# correct solution
+sinkhorn_aligned(a, b, C, epsilon = 0.5, solver=sinkhorn_log)
 ```
 
 ---
