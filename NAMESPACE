@@ -2,6 +2,7 @@
 
 export(check_transport)
 export(compare_transport)
+export(kl_decompose)
 export(kl_score)
 export(make_safe)
 export(sinkhorn_aligned)
