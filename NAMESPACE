@@ -3,6 +3,7 @@
 export(align_transport_inputs)
 export(check_transport)
 export(compare_transport)
+export(cwtvd)
 export(kl_decompose)
 export(kl_score)
 export(make_safe)

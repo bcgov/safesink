@@ -1,0 +1,59 @@
+#' Cost-Weighted Total Variation Distance (CWTVD)
+#'
+#' Computes the cost-weighted total variation distance between an observed and
+#' fitted joint transition matrix. CWTVD extends classical total variation
+#' distance by weighting absolute residuals elementwise by a cost matrix,
+#' penalizing probability mass misallocated to geometrically distant
+#' origin-destination pairs more heavily than mass misallocated to nearby ones.
+#'
+#' Unlike KL divergence, which is geometry-blind, CWTVD respects the metric
+#' structure of the outcome space. Unlike the Wasserstein distance, it does not
+#' solve an optimal transport problem over the residual mass — it applies the
+#' cost matrix directly as a pointwise weight, making it computationally trivial
+#' given an existing transport plan.
+#'
+#' The scoring cost matrix \code{C} should be a neutral common metric,
+#' independent of the cost matrices used in estimation, so that no candidate
+#' model is evaluated on its own terms. In the occupational mobility horse race,
+#' \code{C} is the arithmetic mean of the three competing cost matrices (skill
+#' distance, hierarchical NOC distance, and binary switching cost).
+#'
+#' Note: the conventional 1/2 normalization of total variation distance is
+#' omitted, as CWTVD is used only in relative improvement form, rendering
+#' scale irrelevant.
+#'
+#' @param P_obs A numeric matrix of observed transition probabilities or counts.
+#'   Automatically normalized to sum to one.
+#' @param P_hat A numeric matrix of fitted transition probabilities or counts,
+#'   with the same dimensions as \code{P_obs}. Automatically normalized to
+#'   sum to one.
+#' @param C A numeric matrix of pairwise costs with the same dimensions as
+#'   \code{P_obs}. Typically a distance or dissimilarity matrix over
+#'   origin-destination pairs.
+#'
+#' @return A scalar giving the cost-weighted total variation distance between
+#'   \code{P_obs} and \code{P_hat}.
+#'
+#' @references
+#'   Villani, C. (2009). \emph{Optimal Transport: Old and New}. Springer.
+#'   (For the general principle that transport costs should reflect geometry.)
+#'
+#'   Rubner, Y., Tomasi, C., & Guibas, L. J. (2000). The earth mover's
+#'   distance as a metric for image retrieval. \emph{International Journal
+#'   of Computer Vision}, 40(2), 99--121.
+#'   (For cost-weighted residuals as a practical discrepancy measure.)
+#'
+#' @examples
+#' P_obs <- matrix(c(0.4, 0.1, 0.1, 0.4), nrow = 2)
+#' P_hat <- matrix(c(0.3, 0.2, 0.1, 0.4), nrow = 2)
+#' C     <- matrix(c(0, 1, 1, 0), nrow = 2)
+#' cwtvd(P_obs, P_hat, C)
+#' 
+#' @return Scalar Cost-Weighted Total Variation Distance
+#' @export 
+cwtvd <- function(P_obs, P_hat, C) {
+  P_obs <- as.matrix(P_obs) / sum(P_obs)
+  P_hat <- as.matrix(P_hat) / sum(P_hat)
+  C     <- as.matrix(C)
+  sum(abs(P_obs - P_hat)/2 * C)
+}
