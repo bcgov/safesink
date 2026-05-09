@@ -40,13 +40,7 @@ given an existing transport plan.
 
 The scoring cost matrix \code{C} should be a neutral common metric,
 independent of the cost matrices used in estimation, so that no candidate
-model is evaluated on its own terms. In the occupational mobility horse race,
-\code{C} is the arithmetic mean of the three competing cost matrices (skill
-distance, hierarchical NOC distance, and binary switching cost).
-
-Note: the conventional 1/2 normalization of total variation distance is
-omitted, as CWTVD is used only in relative improvement form, rendering
-scale irrelevant.
+model is advantaged.
 }
 \examples{
 P_obs <- matrix(c(0.4, 0.1, 0.1, 0.4), nrow = 2)
