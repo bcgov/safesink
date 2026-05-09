@@ -1,3 +1,47 @@
+#' Validate and enforce alignment of transport inputs
+#'
+#' Ensures that origin and destination marginals are correctly aligned
+#' with the rows and columns of a transport matrix.
+#'
+#' This function performs *index validation and reordering only*.
+#'
+#' It is intended for use immediately prior to Sinkhorn-type solvers
+#' to guarantee consistent ordering between marginals and matrix inputs.
+#'
+#' @param a Named numeric vector representing the origin marginal distribution.
+#' @param b Named numeric vector representing the destination marginal distribution.
+#' @param M Numeric transport cost matrix where rows correspond to the
+#'   support of `a` and columns correspond to the support of `b`.
+#'   Rectangular matrices are allowed.
+#' @return A list containing:
+#' \describe{
+#'   \item{a}{Reordered origin marginal.}
+#'   \item{b}{Reordered destination marginal.}
+#'   \item{M}{Reordered matrix aligned to `a` and `b`.}
+#' }
+#'
+#' @export
+align_transport_inputs <- function(a, b, M) {
+  
+  stopifnot(is.numeric(a), is.numeric(b))
+  stopifnot(!is.null(names(a)), !is.null(names(b)))
+  stopifnot(!is.null(rownames(M)), !is.null(colnames(M)))
+  stopifnot(is.matrix(M))
+  
+  stopifnot(setequal(names(a), rownames(M)))
+  stopifnot(setequal(names(b), colnames(M)))
+  
+  M <- M[names(a), names(b), drop = FALSE]
+  
+  stopifnot(identical(names(a), rownames(M)))
+  stopifnot(identical(names(b), colnames(M)))
+  
+  list(
+    a = a,
+    b = b,
+    M = M
+  )
+}
 #' Numerically stable log-sum-exp
 #'
 #' Computes \eqn{\log\left(\sum_i e^{x_i}\right)} in a numerically stable

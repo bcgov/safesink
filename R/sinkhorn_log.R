@@ -32,6 +32,9 @@
 #' @return A list containing:
 #' \describe{
 #'   \item{plan}{Optimal transport matrix.}
+#'   \item{transport_cost}{Transport cost term \eqn{\sum_{ij} C_{ij} P_{ij}}.}
+#'   \item{entropy}{Entropy regularization term \eqn{\sum_{ij} P_{ij}(\log P_{ij} - 1)}.}
+#'   \item{objective}{Entropy-regularized OT objective value.}
 #'   \item{log_u}{Log dual potentials for origin marginals.}
 #'   \item{log_v}{Log dual potentials for destination marginals.}
 #'   \item{iterations}{Number of Sinkhorn iterations performed.}
@@ -109,12 +112,26 @@ sinkhorn_log <- function(a, b, C, epsilon,
 
   logP <- outer(log_u, log_v, "+") + logK
   P <- exp(logP)
-
+  err <- max(
+    max(abs(rowSums(P) - a)),
+    max(abs(colSums(P) - b))
+  )
+  transport_cost <- sum(P * C)
+  entropy <- sum( P[P > 0] * (log(P[P > 0]) - 1))
+  objective <- transport_cost + epsilon * entropy
+ 
+  if (!converged) {
+    warning("Sinkhorn did not converge")
+  }
   list(
     plan = P,
+    transport_cost = transport_cost,
+    entropy = entropy,
+    objective = objective,
     log_u = log_u,
     log_v = log_v,
     iterations = iter,
-    converged = converged
+    converged = converged,
+    error = err
   )
 }

@@ -25,6 +25,9 @@ sinkhorn_log(a, b, C, epsilon, max_iter = 5000, tol = 1e-09, verbose = FALSE)
 A list containing:
 \describe{
 \item{plan}{Optimal transport matrix.}
+\item{transport_cost}{Transport cost term \eqn{\sum_{ij} C_{ij} P_{ij}}.}
+\item{entropy}{Entropy regularization term \eqn{\sum_{ij} P_{ij}(\log P_{ij} - 1)}.}
+\item{objective}{Entropy-regularized OT objective value.}
 \item{log_u}{Log dual potentials for origin marginals.}
 \item{log_v}{Log dual potentials for destination marginals.}
 \item{iterations}{Number of Sinkhorn iterations performed.}

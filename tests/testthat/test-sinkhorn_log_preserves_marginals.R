@@ -1,4 +1,4 @@
-test_that("Sinkhorn preserves marginals", {
+test_that("sinkhorn_log preserves marginals", {
 
   set.seed(1)
 
