@@ -13,8 +13,11 @@ vectors exactly matches the row and column ordering of the cost matrix. If these
 are misaligned, the solver will typically return a result **without any warning**,
 even though the resulting transport plan is incorrect.
 
-SafeSink provides a wrapper (`sinkhorn_aligned()`) that verifies and enforces
-alignment using the names of the marginals and cost matrix.
+Safesink provides two layers of protection from misalignment:
+
+The function `align_transport_inputs()` takes named origin and destination vectors,
+and a cost matrix as inputs, and returns a list containing consistently ordered versions
+of the same.  Second, the function `sinkhorn_log()` returns outputs with named dimensions.
 
 ---
 
@@ -59,36 +62,12 @@ produce an incorrect transport plan with no warning.
 
 ---
 
-## Safe alignment
-
-SafeSink prevents this problem by verifying and aligning inputs before solving:
-
-```r
-library(safesink)
-
-sol <- sinkhorn_aligned(
-  a,
-  b,
-  C,
-  epsilon = 0.5,
-  solver = sinkhorn_log
-)
-```
-
-`sinkhorn_aligned()`:
-
-- verifies that marginals match the cost matrix
-- reorders the cost matrix to match marginal ordering
-- delegates the computation to the chosen solver
-
----
-
 ## Core functions
 
 | Function | Purpose |
 |--------|--------|
 | `sinkhorn_log()` | Log‑domain Sinkhorn solver |
-| `sinkhorn_aligned()` | Safe wrapper ensuring correct marginal alignment |
+| `align_transport_inputs()` | Returns a list containing correctly aligned inputs |
 | `check_transport()` | Validate marginal constraints and numerical sanity |
 | `compare_transport()` | Compare two transport plans |
 | `kl_score()` | KL divergence between observed and predicted transition matrices |
@@ -100,13 +79,15 @@ sol <- sinkhorn_aligned(
 
 ```r
 # naive call (incorrect if marginals are misaligned)
-sinkhorn_log(a, b, C, epsilon = 0.5)
+wrong <- sinkhorn_log(a, b, C, epsilon = 0.5)
 
 # This interprets the marginals according to their position,
 # not their names, potentially producing an incorrect transport plan.
 
 # correct solution
-sinkhorn_aligned(a, b, C, epsilon = 0.5, solver=sinkhorn_log)
+aligned <- align_transport_inputs(a, b, C)
+right <- sinkhorn_log(aligned$a, aligned$b, aligned$C, epsilon = 0.5)
+
 ```
 
 ---
