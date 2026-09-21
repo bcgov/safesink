@@ -30,3 +30,9 @@ kl_score(P, Phat)
 Decomposes KL divergence between an observed transition matrix and
 a predicted matrix into cell, row, and column contributions.
 }
+\details{
+NOTE on normalization. This joint-normalizes the whole matrix to sum to one,
+so a row's contribution is mass-weighted (a high-mobility origin contributes
+more simply by carrying more mass). For a per-origin fit score independent of
+mobility volume, use \code{rowwise_score(..., normalize = "conditional")}.
+}

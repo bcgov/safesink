@@ -31,6 +31,11 @@ kl_score <- function(P_obs, P_hat, tiny = 1e-15) {
 #' Decomposes KL divergence between an observed transition matrix and
 #' a predicted matrix into cell, row, and column contributions.
 #'
+#' NOTE on normalization. This joint-normalizes the whole matrix to sum to one,
+#' so a row's contribution is mass-weighted (a high-mobility origin contributes
+#' more simply by carrying more mass). For a per-origin fit score independent of
+#' mobility volume, use \code{rowwise_score(..., normalize = "conditional")}.
+#'
 #' @param P_obs Observed transition matrix
 #' @param P_hat Predicted transition matrix
 #' @param tiny Small floor value used to avoid log(0)

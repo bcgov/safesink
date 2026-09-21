@@ -1,6 +1,6 @@
 Package: safesink
 Title: Safe and Numerically Stable Sinkhorn Optimal Transport
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Richard", "Martin", email = "Richard.Martin@gov.bc.ca", role = c("aut", "cre"))
 Description: 
@@ -17,4 +17,4 @@ Suggests:
     testthat (>= 3.0.0),
     reticulate
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

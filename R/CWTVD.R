@@ -50,3 +50,53 @@ cwtvd <- function(P_obs, P_hat, C) {
   C     <- as.matrix(C)
   sum(abs(P_obs - P_hat)/2 * C)
 }
+
+#' Cost-Weighted Total Variation Distance decomposition
+#'
+#' Decomposes CWTVD between an observed and fitted transition matrix into cell,
+#' row, and column contributions, parallel to \code{kl_decompose()}. Because
+#' CWTVD is already a sum of non-negative per-cell terms
+#' (\code{|P_obs - P_hat|/2 * C}), the decomposition is exact and needs no
+#' special handling: the row contribution is \code{rowSums} of the per-cell
+#' CWTVD matrix.
+#'
+#' NOTE on normalization. Like \code{kl_decompose()}, this joint-normalizes the
+#' whole matrix to sum to one, so a row's contribution is mass-weighted (a
+#' high-mobility origin contributes more simply by carrying more mass). For a
+#' per-origin fit score independent of mobility volume, use
+#' \code{rowwise_score(..., normalize = "conditional")}.
+#'
+#' @param P_obs Observed transition matrix (counts or probabilities).
+#' @param P_hat Fitted transition matrix, same dimensions.
+#' @param C Cost matrix, same dimensions. Neutral common metric.
+#'
+#' @return A list containing:
+#' \describe{
+#'   \item{total}{Total CWTVD}
+#'   \item{cell}{Matrix of cell contributions}
+#'   \item{row}{Row contributions}
+#'   \item{col}{Column contributions}
+#' }
+#' @examples
+#' P_obs <- matrix(c(0.4, 0.1, 0.1, 0.4), nrow = 2)
+#' P_hat <- matrix(c(0.3, 0.2, 0.1, 0.4), nrow = 2)
+#' C     <- matrix(c(0, 1, 1, 0), nrow = 2)
+#' cwtvd_decompose(P_obs, P_hat, C)
+#' @export
+cwtvd_decompose <- function(P_obs, P_hat, C) {
+  P_obs <- as.matrix(P_obs) / sum(P_obs)
+  P_hat <- as.matrix(P_hat) / sum(P_hat)
+  C     <- as.matrix(C)
+  
+  cell <- abs(P_obs - P_hat) / 2 * C
+  
+  list(
+    total = sum(cell),
+    cell  = cell,
+    row   = rowSums(cell),
+    col   = colSums(cell)
+  )
+}
+
+
+
